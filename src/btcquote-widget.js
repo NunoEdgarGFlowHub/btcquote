@@ -1,4 +1,4 @@
-/*! BTCQuote 0.1.0 */
+/*! BTCQuote 0.1.1 */
 var BTCQuote = function () {
 	var self = this;
 
@@ -17,7 +17,7 @@ var BTCQuote = function () {
 
 		self.createWidget();
 
-		self.BTCRef = new Firebase("https://publicdata-bitcoin.firebaseio.com/");
+		self.BTCRef = new Firebase("https://publicdata-cryptocurrency.firebaseio.com/btcquote");
 		self.BTCRef.child("last").on("value", self.receiveBTCData);
 		self.BTCRef.child("bid").on("value", self.receiveBTCData);
 		self.BTCRef.child("ask").on("value", self.receiveBTCData);

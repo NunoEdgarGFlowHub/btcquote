@@ -1,4 +1,4 @@
-/*! BTCQuote 0.1.0 */
+/*! BTCQuote 0.1.1 */
 var BTCQuote = function () {
 	var self = this;
 
@@ -17,7 +17,7 @@ var BTCQuote = function () {
 
 		self.createWidget();
 
-		self.BTCRef = new Firebase("https://publicdata-bitcoin.firebaseio.com/");
+		self.BTCRef = new Firebase("https://publicdata-cryptocurrency.firebaseio.com/btcquote");
 		self.BTCRef.child("last").on("value", self.receiveBTCData);
 		self.BTCRef.child("bid").on("value", self.receiveBTCData);
 		self.BTCRef.child("ask").on("value", self.receiveBTCData);
@@ -146,7 +146,7 @@ var BTCQuote = function () {
 	if (!self.isOldBrowser) {
 		// 
 (function() {
-  var COUNT_FRAMERATE, COUNT_MS_PER_FRAME, DIGIT_FORMAT, DIGIT_HTML, DIGIT_SPEEDBOOST, DURATION, FORMAT_MARK_HTML, FORMAT_PARSER, FRAMERATE, FRAMES_PER_VALUE, MS_PER_FRAME, MutationObserver, Odometer, RIBBON_HTML, TRANSITION_END_EVENTS, TRANSITION_SUPPORT, VALUE_HTML, addClass, createFromHTML, fractionalPart, now, removeClass, requestAnimationFrame, round, transitionCheckStyles, trigger, wrapJQuery, _jQueryWrapped, _old, _ref, _ref1,
+  var COUNT_FRAMERATE, COUNT_MS_PER_FRAME, DIGIT_FORMAT, DIGIT_HTML, DIGIT_SPEEDBOOST, DURATION, FORMAT_MARK_HTML, FORMAT_PARSER, FRAMERATE, FRAMES_PER_VALUE, MS_PER_FRAME, MutationObserver, Odometer, RIBBON_HTML, TRANSITION_END_EVENTS, TRANSITION_SUPPORT, VALUE_HTML, addClass, createFromHTML, fractionalPart, now, removeClass, requestAnimationFrame, round, transitionCheckStyles, trigger, truncate, wrapJQuery, _jQueryWrapped, _old, _ref, _ref1,
     __slice = [].slice;
 
   VALUE_HTML = '<span class="odometer-value"></span>';
@@ -226,6 +226,14 @@ var BTCQuote = function () {
     val += 0.5;
     val = Math.floor(val);
     return val /= Math.pow(10, precision);
+  };
+
+  truncate = function(val) {
+    if (val < 0) {
+      return Math.ceil(val);
+    } else {
+      return Math.floor(val);
+    }
   };
 
   fractionalPart = function(val) {
@@ -361,14 +369,12 @@ var BTCQuote = function () {
     };
 
     Odometer.prototype.cleanValue = function(val) {
-      var badChars, regex;
+      var _ref;
       if (typeof val === 'string') {
-        badChars = '.,';
-        if (this.format.radix) {
-          badChars = badChars.replace(this.format.radix, '');
-        }
-        regex = new RegExp("[" + badChars + "\s]", 'g');
-        val = parseFloat(val.replace(regex, ''), 10) || 0;
+        val = val.replace((_ref = this.format.radix) != null ? _ref : '.', '<radix>');
+        val = val.replace(/[.,]/g, '');
+        val = val.replace('<radix>', '.');
+        val = parseFloat(val, 10) || 0;
       }
       return round(val, this.format.precision);
     };
@@ -459,7 +465,7 @@ var BTCQuote = function () {
       _ref = value.toString().split('').reverse();
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         digit = _ref[_j];
-        if (digit === this.format.radix) {
+        if (digit === '.') {
           wholePart = true;
         }
         this.addDigit(digit, wholePart);
@@ -515,15 +521,15 @@ var BTCQuote = function () {
     };
 
     Odometer.prototype.addDigit = function(value, repeating) {
-      var chr, digit, resetted;
+      var chr, digit, resetted, _ref;
       if (repeating == null) {
         repeating = true;
       }
       if (value === '-') {
         return this.addSpacer(value, null, 'odometer-negation-mark');
       }
-      if (value === this.format.radix) {
-        return this.addSpacer(value, null, 'odometer-radix-mark');
+      if (value === '.') {
+        return this.addSpacer((_ref = this.format.radix) != null ? _ref : '.', null, 'odometer-radix-mark');
       }
       if (repeating) {
         resetted = false;
@@ -603,7 +609,7 @@ var BTCQuote = function () {
     Odometer.prototype.getFractionalDigitCount = function() {
       var i, parser, parts, value, values, _i, _len;
       values = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      parser = /^\d*\.(\d*?)0*$/;
+      parser = /^\-?\d*\.(\d*?)0*$/;
       for (i = _i = 0, _len = values.length; _i < _len; i = ++_i) {
         value = values[i];
         values[i] = value.toString();
@@ -640,8 +646,8 @@ var BTCQuote = function () {
       digits = [];
       boosted = 0;
       for (i = _i = 0; 0 <= digitCount ? _i < digitCount : _i > digitCount; i = 0 <= digitCount ? ++_i : --_i) {
-        start = Math.floor(oldValue / Math.pow(10, digitCount - i - 1));
-        end = Math.floor(newValue / Math.pow(10, digitCount - i - 1));
+        start = truncate(oldValue / Math.pow(10, digitCount - i - 1));
+        end = truncate(newValue / Math.pow(10, digitCount - i - 1));
         dist = end - start;
         if (Math.abs(dist) > this.MAX_VALUES) {
           frames = [];
@@ -695,6 +701,9 @@ var BTCQuote = function () {
             addClass(numEl, 'odometer-first-value');
           }
         }
+      }
+      if (start < 0) {
+        this.addDigit('-');
       }
       mark = this.inside.querySelector('.odometer-radix-mark');
       if (mark != null) {
@@ -757,7 +766,15 @@ var BTCQuote = function () {
     }, false);
   }
 
-  window.Odometer = Odometer;
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], function() {
+      return Odometer;
+    });
+  } else if (typeof exports === !'undefined') {
+    module.exports = Odometer;
+  } else {
+    window.Odometer = Odometer;
+  }
 
 }).call(this);
 
