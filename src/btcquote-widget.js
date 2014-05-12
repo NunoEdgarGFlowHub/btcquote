@@ -17,7 +17,7 @@ var BTCQuote = function () {
 
 		self.createWidget();
 
-		self.BTCRef = new Firebase("https://publicdata-cryptocurrency.firebaseio.com/btcquote");
+		self.BTCRef = new Firebase("https://publicdata-cryptocurrency.firebaseio.com/bitcoin");
 		self.BTCRef.child("last").on("value", self.receiveBTCData);
 		self.BTCRef.child("bid").on("value", self.receiveBTCData);
 		self.BTCRef.child("ask").on("value", self.receiveBTCData);
@@ -104,7 +104,8 @@ var BTCQuote = function () {
 		self._elements.last.innerHTML = 0;
 
 		if (!self.isOldBrowser) {
-			new Odometer({el: self._elements.last, format: 'ddddd.dd'});
+            console.log(self._elements.last);
+			new Odometer({el: self._elements.last, format: '(,ddddd).dd'});
 		}
 	};
 
