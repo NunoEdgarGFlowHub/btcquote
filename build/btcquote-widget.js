@@ -104,7 +104,6 @@ var BTCQuote = function () {
 		self._elements.last.innerHTML = 0;
 
 		if (!self.isOldBrowser) {
-            console.log(self._elements.last);
 			new Odometer({el: self._elements.last, format: '(,ddddd).dd'});
 		}
 	};
