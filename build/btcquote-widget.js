@@ -146,7 +146,7 @@ var BTCQuote = function () {
 	if (!self.isOldBrowser) {
 		// 
 (function() {
-  var COUNT_FRAMERATE, COUNT_MS_PER_FRAME, DIGIT_FORMAT, DIGIT_HTML, DIGIT_SPEEDBOOST, DURATION, FORMAT_MARK_HTML, FORMAT_PARSER, FRAMERATE, FRAMES_PER_VALUE, MS_PER_FRAME, MutationObserver, Odometer, RIBBON_HTML, TRANSITION_END_EVENTS, TRANSITION_SUPPORT, VALUE_HTML, addClass, createFromHTML, fractionalPart, now, removeClass, requestAnimationFrame, round, transitionCheckStyles, trigger, truncate, wrapJQuery, _jQueryWrapped, _old, _ref, _ref1,
+  var COUNT_FRAMERATE, COUNT_MS_PER_FRAME, DIGIT_FORMAT, DIGIT_HTML, DIGIT_SPEEDBOOST, DURATION, FORMAT_MARK_HTML, FORMAT_PARSER, FRAMERATE, FRAMES_PER_VALUE, MS_PER_FRAME, MutationObserver, Odometer, RIBBON_HTML, TRANSITION_END_EVENTS, TRANSITION_SUPPORT, VALUE_HTML, addClass, createFromHTML, now, removeClass, requestAnimationFrame, round, transitionCheckStyles, trigger, truncate, wrapJQuery, _jQueryWrapped, _old, _ref, _ref1,
     __slice = [].slice;
 
   VALUE_HTML = '<span class="odometer-value"></span>';
@@ -234,10 +234,6 @@ var BTCQuote = function () {
     } else {
       return Math.floor(val);
     }
-  };
-
-  fractionalPart = function(val) {
-    return val - round(val);
   };
 
   _jQueryWrapped = false;
@@ -461,8 +457,8 @@ var BTCQuote = function () {
       this.el.className = newClasses.join(' ');
       this.ribbons = {};
       this.digits = [];
-      wholePart = !this.format.precision || !fractionalPart(value) || false;
-      _ref = value.toString().split('').reverse();
+      wholePart = !this.format.precision;
+      _ref = value.toFixed(this.format.precision).split('').reverse();
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         digit = _ref[_j];
         if (digit === '.') {
@@ -609,10 +605,10 @@ var BTCQuote = function () {
     Odometer.prototype.getFractionalDigitCount = function() {
       var i, parser, parts, value, values, _i, _len;
       values = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      parser = /^\-?\d*\.(\d*?)0*$/;
+      parser = /^\-?\d*\.(\d*?)$/;
       for (i = _i = 0, _len = values.length; _i < _len; i = ++_i) {
         value = values[i];
-        values[i] = value.toString();
+        values[i] = value.toFixed(this.format.precision);
         parts = parser.exec(values[i]);
         if (parts == null) {
           values[i] = 0;
@@ -766,18 +762,9 @@ var BTCQuote = function () {
     }, false);
   }
 
-  if (typeof define === 'function' && define.amd) {
-    define(['jquery'], function() {
-      return Odometer;
-    });
-  } else if (typeof exports === !'undefined') {
-    module.exports = Odometer;
-  } else {
-    window.Odometer = Odometer;
-  }
+  window.Odometer = Odometer;
 
 }).call(this);
-
 	}
 
 	// Initialize widget by loading Firebase.js

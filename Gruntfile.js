@@ -1,12 +1,5 @@
 module.exports = function (grunt) {
   grunt.initConfig({
-    bower: {
-      install: {
-        options: {
-          targetDir: 'src/lib'
-        }
-      }
-    },
     jshint: {
       all: [
         'src/*.js',
@@ -18,7 +11,7 @@ module.exports = function (grunt) {
           patterns: [
             {
               match: 'odometer',
-              replacement: '\n<%= grunt.file.read("src/lib/odometer/odometer.js") %>'
+              replacement: '\n<%= grunt.file.read("./src/lib/odometer.js") %>'
             }
           ]
         },
@@ -42,7 +35,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', [
     'jshint',
-    'bower',
     'replace',
     'uglify'
   ]);
